@@ -42,8 +42,8 @@ function drawArray(arr){
     for(let i=0; i<arr.length; i++)
     {
         for(let j=0; j<arr[i].length; j++){
-            x = i*res;
-            y = j*res;
+            let x = i*res;
+            let y = j*res;
             if(arr[i][j] != "")
             {
                 fill(255);
@@ -94,60 +94,67 @@ class Human{
     }
 }
 
-var mapSizeX=100;
-var mapSizeY=100;
+var mapSizeX=400;
+var mapSizeY=400;
 var mapa = empties(mapSizeX,mapSizeY);
-var humans = [new Human(50, 50, 90)];
-let x,y;
+var populationSize = 10000;
+var res = 3;
+var framesCount = 0;
+var humans = [];
+for(let i=0; i<populationSize; i++)
+{
+    humans.push(new Human(100, 100, 90));
+}
+
 function mainloop(){
 
-    for(let i=0; i<1000; i++){
-        x = humans[0].x;
-        y = humans[0].y;
-        
-        leftBreach = x<=0;
-        rightBreach = x>=mapSizeX-1;
-        downBreach = y<=0;
-        upBreach = y>=mapSizeY-1;
-
+    humans.forEach(function(h){
+        leftBreach = h.x<=0+2;
+        rightBreach = h.x>=mapSizeX-1-2;
+        downBreach = h.y<=0+2;
+        upBreach = h.y>=mapSizeY-1-2;
+        //TODO: catch TypeErrors on that?
+        mapa[h.x][h.y] = "";
         if(leftBreach || rightBreach || downBreach || upBreach){
             //out of map
             if(leftBreach){
-                humans[0].bounceRight();
+                h.bounceRight();
             }
             if(rightBreach){
-                humans[0].bounceLeft();
+                h.bounceLeft();
             }
             if(downBreach){
-                humans[0].bounceUp();
+                h.bounceUp();
             }
             if(upBreach){
-                humans[0].bounceDown();
+                h.bounceDown();
             }
-            humans[0].updatePos();
+            h.updatePos();
+
         }else{
             //in map-> update position
-            humans[0].updatePos();
+            h.updatePos();
 
             //cell occupied?
-            if(mapa[humans[0].x][humans[0].y] != ""){
-                //humans met
+            if(mapa[h.x][h.y] == ""){
+                
+                //no humans met. occupy this field
+                mapa[h.x][h.y] = h.id;
+                debugger;
+                console.log('occupy dis');
             }
             else{
-                //no humans met. occupy this field
-                mapa[x][y] = humans[0].id
+                //humans met
+                console.log('cell occupied')
             }
+            debugger;
         }
-    }
+            
+    })
 }
 
-var r = 100;
-var c = 100;
-var res = 5;
-var framesCount = 0;
-
 function setup() {
-    createCanvas(r*res,c*res);
+    createCanvas(mapSizeY*res,mapSizeX*res);
 };
 
 function draw(){
